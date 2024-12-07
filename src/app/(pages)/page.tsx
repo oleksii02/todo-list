@@ -1,4 +1,5 @@
-const Page = () => {
-  return <div className="flex h-screen flex-col">111</div>;
-};
-export default Page;
+import { Home } from '@/views/Home';
+
+export default async function HomePage() {
+  return <Home />;
+}

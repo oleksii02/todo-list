@@ -7,3 +7,7 @@ export * from './model/services/markTaskAsNotDone';
 export * from './model/services/fetchAddTask';
 export * from './model/services/addTask';
 export * from './model/services/fetchTasks';
+export * from './model/services/deleteTaskThunk';
+export * from './model/services/markAsNotDone';
+export * from './model/services/markAsDone';
+export * from './model/services/editTaskThunk';
