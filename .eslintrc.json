@@ -1,3 +1,42 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "root": true,
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-curly-brace-presence": [
+      "error",
+      { "props": "never", "children": "never" }
+    ],
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "react/no-unescaped-entities": "warn",
+    "react/react-in-jsx-scope": "off",
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error", "dir", "log"]
+      }
+    ],
+    "prettier/prettier": "warn"
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    "out",
+    "public",
+    "dist",
+    "**/.lintstagedrc.js"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }
