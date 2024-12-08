@@ -1,5 +1,7 @@
 ## Todo-Lidt
 Deploy:https://thriving-cranachan-73d019.netlify.app/
+or
+https://todo-list-n93sfpk71-oleksiis-projects-403abc94.vercel.app/
 
 ## Project Structure
 ```
