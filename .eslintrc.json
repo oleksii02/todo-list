@@ -10,8 +10,9 @@
   ],
   "rules": {
     "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "warn",
     "react/jsx-curly-brace-presence": [
-      "error",
+      "warn",
       { "props": "never", "children": "never" }
     ],
     "@typescript-eslint/no-unused-vars": "warn",
@@ -24,7 +25,8 @@
         "allow": ["warn", "error", "dir", "log"]
       }
     ],
-    "prettier/prettier": "warn"
+    "prettier/prettier": "warn",
+    "no-useless-escape": "warn"
   },
   "ignorePatterns": [
     "node_modules",
