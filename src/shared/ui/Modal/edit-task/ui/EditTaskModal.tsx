@@ -1,6 +1,5 @@
 'use client';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { FC } from 'react';
 import { useState } from 'react';
 import { useAppDispatch } from '@/shared/lib/state/dispatch/useAppDispatch';
 import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
@@ -15,10 +14,10 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: () => void;
-  task: Task;
+  task: Task | null;
 }
 
-export const EditTaskModal: React.FC<ModalProps> = ({
+export const EditTaskModal: FC<ModalProps> = ({
   isOpen,
   onClose,
   onOpenChange,

@@ -1,5 +1,6 @@
 'use client';
-import React, { FC, useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import { fetchTasks } from '@/entities/contents';
 import { useAppDispatch } from '@/shared/lib/state/dispatch/useAppDispatch';
@@ -7,32 +8,37 @@ import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
 import { login, returnError } from '@/entities/auth';
 import useValidateInput from '@/shared/lib/hooks/useValidateInput';
 import { ButtonClose } from '@/shared/ui/ButtonClose/ui/ButtonClose';
-import {Button, Input, Modal, ModalContent, useDisclosure } from '@nextui-org/react';
+import { Input } from '@nextui-org/input';
+import { Button } from '@nextui-org/button';
 import { getUserId } from '@/entities/auth/model/selectors/getUserId';
 import { getAuthenticatedStatus } from '@/entities/auth/model/selectors/getAuthenticatedStatus';
 import { getLoading } from '@/entities/auth/model/selectors/getLoading';
 import { getErrorMessage } from '@/entities/auth/model/selectors/getErrorMessage';
-export const ModalLogin: FC = () => {
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const ModalLogin: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useAppDispatch();
-  const {isOpen, onOpen, onClose, onOpenChange} = useDisclosure();
-  // const userId = useAppSelector(getUserId)
-  // const isAuthenticated = useAppSelector(getAuthenticatedStatus)
-  // const isLoading = useAppSelector(getLoading)
-  // const errorMessage = useAppSelector(getErrorMessage)
-  const { isAuthenticated, isLoading, userId, errorMessage } = useAppSelector(
-    (state) => state.auth
-  );
+  const userId = useAppSelector(getUserId)
+  const isAuthenticated = useAppSelector(getAuthenticatedStatus)
+  const isLoading = useAppSelector(getLoading)
+  const errorMessage = useAppSelector(getErrorMessage)
+  // const { isAuthenticated, isLoading, userId, errorMessage } = useAppSelector(
+  //   (state) => state.auth
+  // );
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   useLayoutEffect(() => {
-    console.log('useLayoutEffect', userId, 'userId')
     dispatch(fetchTasks(userId));
     if (isAuthenticated) {
       onClose();
     }
-  }, [isAuthenticated, isOpen, dispatch]);
+  }, [isAuthenticated, onClose, dispatch]);
 
   const loginUser = async (email: string, password: string) => {
     const inputError = useValidateInput(email, 'email', '');
@@ -53,20 +59,21 @@ export const ModalLogin: FC = () => {
     }
   };
 
-  return (
-    <>
-      <Button
-        className="border border-white font-medium"
-        color="primary"
-        onPress={onOpen}
-      >
-        Log in
-      </Button>
-      <Modal
-        isOpen={isOpen} onOpenChange={onOpenChange}
+  const modalRoot = document.getElementById('modal-root');
+  if (!isOpen || !modalRoot) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      onClick={() => {
+        dispatch(returnError());
+        onClose();
+      }}
+    >
+      <div
         className="z-11 relative mx-auto flex w-11/12 max-w-xl flex-col items-center rounded-lg bg-white p-4"
+        onClick={(e) => e.stopPropagation()}
       >
-        <ModalContent>
         <h1 className="mb-5 text-xl font-medium">Log in</h1>
         <ButtonClose
           onPress={() => {
@@ -102,6 +109,7 @@ export const ModalLogin: FC = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
         <div className="flex w-4/5 justify-end">
           <Button color="primary" onClick={() => loginUser(email, password)}>
             {isLoading ? (
@@ -111,8 +119,8 @@ export const ModalLogin: FC = () => {
             )}
           </Button>
         </div>
-        </ModalContent>
-      </Modal>
-    </>
+      </div>
+    </div>,
+    modalRoot
   );
 };

@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { useAppDispatch } from '@/shared/lib/state/dispatch/useAppDispatch';
 import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
 import {
@@ -23,7 +23,6 @@ import {
 import { Button } from '@nextui-org/button';
 import { DeleteIcon, EditIcon } from '@/shared/ui/Icon';
 import { getUserId } from '@/entities/auth/model/selectors/getUserId';
-import { getTaskList } from '@/entities/contents/model/selectors/getTaskList';
 
 export const TaskList: FC = () => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -42,16 +41,6 @@ export const TaskList: FC = () => {
     (currentPage - 1) * tasksPerPage,
     currentPage * tasksPerPage
   );
-
-  // if (!!currentTasks) {
-  //   // dispatch(fetchTasks(userId));
-  // }
-
-  useEffect(() => {
-    console.log(currentTasks, taskList, userId, 'currentTasks');
-  }, [taskList]);
-
-  console.log(currentTasks, taskList, userId, 'currentTasks');
 
   const handleDeleteTask = async (taskId: string) => {
     const userConfirmed = window.confirm('Delete Task?');
@@ -110,7 +99,7 @@ export const TaskList: FC = () => {
             <TableColumn>Delete</TableColumn>
           </TableHeader>
           <TableBody>
-            {currentTasks.map((task, i) => (
+            {currentTasks.map((task) => (
               <TableRow key={task.taskId}>
                 <TableCell>{task.taskName}</TableCell>
                 <TableCell width={200}>{task.description}</TableCell>
