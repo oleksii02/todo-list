@@ -26,8 +26,8 @@ export const ModalRegister: FC<ModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const errorRegister  = useAppSelector(getErrorRegister);
-  const isLoadingRegister = useAppSelector(getLoadingRegister)
+  const errorRegister = useAppSelector(getErrorRegister);
+  const isLoadingRegister = useAppSelector(getLoadingRegister);
   const userId = useAppSelector(getUserId);
   const isAuthenticated = useAppSelector(getAuthenticatedStatus);
   const dispatch = useAppDispatch();
