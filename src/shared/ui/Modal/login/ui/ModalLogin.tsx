@@ -76,7 +76,7 @@ export const ModalLogin: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         <div className="form-control mb-4 w-4/5">
           <Input
-            isInvalid={error || errorMessage}
+            isInvalid={!!error || !!errorMessage}
             variant="bordered"
             color={error || errorMessage ? 'danger' : 'primary'}
             label="Email"
@@ -90,7 +90,7 @@ export const ModalLogin: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         <div className="form-control mb-4 w-4/5">
           <Input
-            isInvalid={error || errorMessage}
+            isInvalid={!!error || !!errorMessage}
             variant="bordered"
             color={error || errorMessage ? 'danger' : 'primary'}
             type="password"

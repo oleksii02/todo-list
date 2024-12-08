@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import {  useState } from 'react';
 import { useAppDispatch } from '@/shared/lib/state/dispatch/useAppDispatch';
 import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
 import {
@@ -7,22 +7,28 @@ import {
   fetchTasks,
   markAsDone,
   markAsNotDone,
+  Task,
 } from '@/entities/contents';
 import { EditTaskModal } from '@/shared/ui/Modal/edit-task';
+import {
+  Checkbox,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@nextui-org/react';
+import { Button } from '@nextui-org/button';
+import { DeleteIcon, EditIcon } from '@/shared/ui/Icon';
+import { getTaskList } from '@/entities/contents/model/selectors/getTaskList';
+import { getUserId } from '@/entities/auth/model/selectors/getUserId';
 
-export type Task = {
-  taskId: string;
-  Task: string;
-  Description: string;
-  TimeStamp: number;
-  Done: boolean;
-};
 export default function TaskList() {
   const dispatch = useAppDispatch();
-  const taskList = useAppSelector(
-    (state) => state.contents?.taskList
-  ) as Task[];
-  const userId = useAppSelector((state) => state.auth?.userId);
+  const taskList = useAppSelector(getTaskList) as Task[];
+  const userId = useAppSelector(getUserId);
 
   const [taskToEdit, setTaskToEdit] = useState<any>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,9 +36,8 @@ export default function TaskList() {
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 8;
   const totalPages = Math.ceil(taskList.length / tasksPerPage);
-  const currentTasks = taskList.slice(
-    (currentPage - 1) * tasksPerPage,
-    currentPage * tasksPerPage
+  const [currentTasks] = useState<Task[]>(
+    taskList.slice((currentPage - 1) * tasksPerPage, currentPage * tasksPerPage)
   );
 
   const handleDeleteTask = async (taskId: string) => {
@@ -66,72 +71,76 @@ export default function TaskList() {
         task={taskToEdit}
       />
       <div className="flex flex-col items-center">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Task</th>
-              <th>Description</th>
-              <th>Time stamp</th>
-              <th>Done</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table
+          className="rounded-2xl border-2 border-primary"
+          color="primary"
+          bottomContent={
+            <div className="flex w-full justify-center">
+              <Pagination
+                showControls
+                color="primary"
+                page={currentPage}
+                total={totalPages}
+                onChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          }
+        >
+          <TableHeader>
+            <TableColumn>Task name</TableColumn>
+            <TableColumn>Description</TableColumn>
+            <TableColumn>Time of creation</TableColumn>
+            <TableColumn>Confirm</TableColumn>
+            <TableColumn>Status</TableColumn>
+            <TableColumn>Edit</TableColumn>
+            <TableColumn>Delete</TableColumn>
+          </TableHeader>
+          <TableBody>
             {currentTasks.map((task, i) => (
-              <tr key={i}>
-                <td>{task.Task}</td>
-                <td className="max-w-xs break-words">{task.Description}</td>
-                <td>{new Date(task.TimeStamp).toLocaleDateString()}</td>
-                <td>
-                  <div className="form-control w-52">
-                    <label className="label cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="toggle toggle-primary"
-                        checked={task.Done}
-                        onChange={() =>
-                          handleToggleTask(task.taskId, task.Done)
-                        }
-                      />
-                      <span className="label-text">
-                        {task.Done ? 'Done' : 'Not Done'}
-                      </span>
-                    </label>
-                  </div>
-                </td>
-                <td className="flex min-h-full items-center justify-center space-x-4 py-2 pt-5">
-                  {/*<AiFillEdit*/}
-                  {/*  className="text-3xl"*/}
-                  {/*  onClick={() => {*/}
-                  {/*    setIsOpen(true);*/}
-                  {/*    setTaskToEdit(task);*/}
-                  {/*  }}*/}
-                  {/*/>*/}
-                  {/*<BsFillTrashFill*/}
-                  {/*  className="text-3xl"*/}
-                  {/*  onClick={() => handleDeleteTask(task.taskId)}*/}
-                  {/*/>*/}
-                </td>
-              </tr>
+              <TableRow key={task.taskId}>
+                <TableCell>{task.taskName}</TableCell>
+                <TableCell width={200}>{task.description}</TableCell>
+                <TableCell>
+                  {new Date(task.timeCreation).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  <Checkbox
+                    size={'lg'}
+                    color="primary"
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    isSelected={task.status}
+                    onChange={() => handleToggleTask(task.taskId, task.status)}
+                  />
+                </TableCell>
+                <TableCell> {task.status ? 'Ready' : 'In progress'}</TableCell>
+                <TableCell>
+                  <Button
+                    className="h-6 w-6 min-w-6 rounded-lg"
+                    isIconOnly
+                    color="primary"
+                    onPress={() => {
+                      setIsOpen(true);
+                      setTaskToEdit(task);
+                    }}
+                  >
+                    <EditIcon color={'#fff'} width={18} height={18} />
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    className="h-6 w-6 min-w-6 rounded-lg"
+                    isIconOnly
+                    color="danger"
+                    onPress={() => handleDeleteTask(task.taskId)}
+                  >
+                    <DeleteIcon color={'#fff'} width={20} height={20} />
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-        <div className="join mt-4">
-          {totalPages > 1 &&
-            Array.from({ length: totalPages }, (_, index) => {
-              const pageNumber = index + 1;
-              const isActive = currentPage === pageNumber ? 'btn-primary' : '';
-              return (
-                <button
-                  key={pageNumber}
-                  className={`join-item btn ${isActive}`}
-                  onClick={() => setCurrentPage(pageNumber)}
-                >
-                  {pageNumber}
-                </button>
-              );
-            })}
-        </div>
+          </TableBody>
+        </Table>
       </div>
     </>
   );

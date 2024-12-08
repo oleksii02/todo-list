@@ -1,8 +1,9 @@
 export type Task = {
-  Task: string;
-  Description: string;
-  TimeStamp: number;
-  Done: boolean;
+  taskId: string;
+  taskName: string;
+  description: string;
+  timeCreation: number;
+  status: boolean;
 };
 
 export interface contentsState {

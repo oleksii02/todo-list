@@ -7,5 +7,5 @@ export async function markTaskAsDone(
   taskId: string
 ): Promise<void> {
   const taskRef = ref(db, `Users/${userId}/tasks/${taskId}`);
-  return update(taskRef, { Done: true });
+  return update(taskRef, { status: true });
 }

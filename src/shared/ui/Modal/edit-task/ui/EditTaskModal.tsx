@@ -5,15 +5,10 @@ import { useState } from 'react';
 import { useAppDispatch } from '@/shared/lib/state/dispatch/useAppDispatch';
 import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
 import useValidateInput from '@/shared/lib/hooks/useValidateInput';
-import { editTaskThunk, fetchTasks } from '@/entities/contents';
-
-type Task = {
-  taskId: string;
-  Task: string;
-  Description: string;
-  TimeStamp: number;
-  Done: boolean;
-} | null;
+import { editTaskThunk, fetchTasks, Task } from '@/entities/contents';
+import { ButtonClose } from '@/shared/ui/ButtonClose/ui/ButtonClose';
+import { Input, Textarea } from '@nextui-org/input';
+import { Button } from '@nextui-org/button';
 
 interface ModalProps {
   isOpen: boolean;
@@ -32,24 +27,25 @@ export const EditTaskModal: React.FC<ModalProps> = ({
 
   const dispatch = useAppDispatch();
   const { userId, isAuthenticated } = useAppSelector((state) => state.auth);
-  const [name, setName] = useState(task.Task);
-  const [descr, setDescr] = useState(task.Description);
+  const [name, setName] = useState(task.taskName);
+  const [description, setDescription] = useState(task.description);
   const [error, setError] = useState('');
 
   const HandleEditTask = async () => {
     const inputError = useValidateInput(name, '', '');
-    const inputError2 = useValidateInput(descr, '', '');
+    const inputError2 = useValidateInput(description, '', '');
 
     if (
       inputError ||
       inputError2 ||
-      name === task.Task ||
-      descr === task.Description
+      name === task.taskName ||
+      description === task.description
     ) {
       if (inputError) setError(inputError);
       if (inputError2) setError(inputError2);
-      if (name === task.Task) setError('You have to change something!');
-      if (descr === task.Description) setError('You have to change something!');
+      if (name === task.taskName) setError('You have to change something!');
+      if (description === task.description)
+        setError('You have to change something!');
     } else {
       try {
         await dispatch(
@@ -57,10 +53,10 @@ export const EditTaskModal: React.FC<ModalProps> = ({
             userId,
             taskId: task.taskId,
             data: {
-              Task: name,
-              Description: descr,
-              TimeStamp: task.TimeStamp,
-              Done: task.Done,
+              taskName: name,
+              description: description,
+              timeCreation: task.timeCreation,
+              status: task.status,
             },
           })
         );
@@ -78,43 +74,47 @@ export const EditTaskModal: React.FC<ModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative mx-auto flex w-11/12 max-w-xl flex-col items-center rounded-lg bg-white p-4"
+        className="relative mx-auto flex min-h-[250px] w-2/3 max-w-xl flex-col items-center justify-center rounded-md border-2 border-primary bg-white p-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <h1 className="mb-6">Edit Task</h1>
-        <button
-          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          onClick={onClose}
-        >
-          ✕
-        </button>
+        <h1 className="mb-4 text-2xl font-medium">Edit Task</h1>
+
+        <ButtonClose onPress={onClose} />
         {isAuthenticated ? (
           <>
-            <div className="pb-24">
-              <input
+            <div className="mb-4 w-4/5">
+              <Input
                 type="text"
-                placeholder="Task"
+                label="Task"
+                color={error ? 'danger' : 'primary'}
+                variant="bordered"
                 value={name}
+                isInvalid={!!error}
+                errorMessage={error}
                 onChange={(e) => setName(e.target.value)}
                 className="input input-bordered input-primary mb-4 w-full"
               />
-              <textarea
-                className="textarea textarea-primary w-full"
-                placeholder="Description"
-                value={descr}
-                onChange={(e) => setDescr(e.target.value)}
-              ></textarea>
-              <label className="label">
-                <span className="label-text text-red-400">
-                  {error && error}
-                </span>
-                <span className="label-text-alt"></span>
-              </label>
+              <Textarea
+                disableAnimation
+                disableAutosize
+                color={error ? 'danger' : 'primary'}
+                variant="bordered"
+                classNames={{
+                  input: 'resize-y min-h-[40px]',
+                }}
+                label="Description"
+                isClearable
+                isInvalid={!!error}
+                errorMessage={error}
+                value={description}
+                onClear={() => setDescription('')}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
-            <div className="modal-action absolute bottom-10 right-10">
-              <button className="btn btn-primary" onClick={HandleEditTask}>
+            <div className="flex w-4/5 justify-end">
+              <Button color="primary" onClick={HandleEditTask}>
                 Edit Task
-              </button>
+              </Button>
             </div>
           </>
         ) : (

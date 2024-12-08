@@ -9,6 +9,5 @@ export async function editTask(
   data: Partial<Task>
 ): Promise<void> {
   const taskRef = ref(db, `Users/${userId}/tasks/${taskId}`);
-  console.log(data);
   return update(taskRef, data);
 }

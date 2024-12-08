@@ -1,19 +1,20 @@
 'use client';
-import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
 import TaskList from '@/shared/ui/TaskList/ui/TaskList';
-import { TaskSkeleton } from '@/shared/ui/TaskSkeleton';
-import { NewTask } from '@/shared/ui/NewTask';
+import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
+import { getAuthenticatedStatus } from '@/entities/auth/model/selectors/getAuthenticatedStatus';
+import { getTaskList } from '@/entities/contents/model/selectors/getTaskList';
+import { Task } from '@/entities/contents';
+import { getLoadingTasks } from '@/entities/contents/model/selectors/getLoadingTasks';
+import { TableDisabled } from '@/shared/ui/TableDisabled';
 
 export const Content = () => {
-  const { taskList, isLoadingTasks } = useAppSelector(
-    (state) => state.contents
-  );
+  const  isAuthenticated  = useAppSelector(getAuthenticatedStatus);
+  const taskList = useAppSelector(getTaskList) as Task[];
+  const isLoadingTasks = useAppSelector(getLoadingTasks);
+
   return (
     <>
-      <div className="my-5 flex flex-col gap-4 text-center">
-        <NewTask />
-      </div>
-      {taskList && !isLoadingTasks ? <TaskList /> : <TaskSkeleton />}
+      {taskList && !isLoadingTasks && isAuthenticated ?  <TaskList /> : <TableDisabled /> }
     </>
   );
 };

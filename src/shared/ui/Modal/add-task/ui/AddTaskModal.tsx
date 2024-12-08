@@ -8,18 +8,23 @@ import useValidateInput from '@/shared/lib/hooks/useValidateInput';
 import { addTask, fetchTasks } from '@/entities/contents';
 import { Button } from '@nextui-org/button';
 import { ButtonClose } from '@/shared/ui/ButtonClose/ui/ButtonClose';
+import { Input, Textarea } from '@nextui-org/input';
+import { getUserId } from '@/entities/auth/model/selectors/getUserId';
+import { getAuthenticatedStatus } from '@/entities/auth/model/selectors/getAuthenticatedStatus';
 
-interface ModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const AddTaskModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+export const AddTaskModal: FC<Props> = ({ isOpen, onClose }) => {
   const modalRoot = document.getElementById('modal-root');
   if (!isOpen || !modalRoot) return null;
 
   const dispatch = useAppDispatch();
-  const { userId, isAuthenticated } = useAppSelector((state) => state.auth);
+  const userId = useAppSelector(getUserId)
+  const  isAuthenticated  = useAppSelector(getAuthenticatedStatus);
+
   const [name, setName] = useState('');
   const [descr, setDescr] = useState('');
   const [error, setError] = useState('');
@@ -54,37 +59,42 @@ export const AddTaskModal: FC<ModalProps> = ({ isOpen, onClose }) => {
         <ButtonClose onPress={onClose} />
         {isAuthenticated ? (
           <>
-            <div className="pb-24">
-              <input
+            <div className="w-4/5 mb-4">
+              <Input
                 type="text"
-                placeholder="Task"
+                label="Task Name"
+                color="primary"
+                variant="bordered"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="input input-bordered input-primary mb-4 w-full"
               />
-              <textarea
-                className="textarea textarea-primary w-full"
-                placeholder="Description"
+              <Textarea
+                disableAnimation
+                disableAutosize
+                color={error ? 'danger' : 'primary'}
+                variant="bordered"
+                classNames={{
+                  input: 'resize-y min-h-[40px]',
+                }}
+                label="Description"
+                isClearable
                 value={descr}
+                onClear={() => setDescr('')}
                 onChange={(e) => setDescr(e.target.value)}
-              ></textarea>
-              <label className="label">
-                <span className="label-text text-red-400">
-                  {error && error}
-                </span>
-                <span className="label-text-alt"></span>
-              </label>
+                errorMessage={error}
+              />
             </div>
-            <div className="modal-action absolute bottom-10 right-10">
-              <button className="btn btn-primary" onClick={HandleAddTask}>
+            <div className="w-4/5 flex justify-end">
+              <Button color="primary" onClick={HandleAddTask}>
                 Add Task
-              </button>
+              </Button>
             </div>
           </>
         ) : (
           <>
             <h1 className="mb-6 text-lg font-medium">
-              Please log in to access our app!
+              Kindly sign in to use our app!
             </h1>
           </>
         )}

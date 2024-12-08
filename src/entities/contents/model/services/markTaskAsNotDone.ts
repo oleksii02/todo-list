@@ -7,5 +7,5 @@ export async function markTaskAsNotDone(
   taskId: string
 ): Promise<void> {
   const taskRef = ref(db, `Users/${userId}/tasks/${taskId}`);
-  return update(taskRef, { Done: false });
+  return update(taskRef, { status: false });
 }

@@ -10,7 +10,7 @@ export const NewTask = () => {
   };
 
   return (
-    <>
+    <div className="my-5 flex flex-col gap-4 text-center">
       {isOpen && (
         <AddTaskModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
       )}
@@ -23,6 +23,6 @@ export const NewTask = () => {
           New Task
         </Button>
       </div>
-    </>
+    </div>
   );
 };
