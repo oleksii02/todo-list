@@ -8,9 +8,11 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --ext js,ts,tsx --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "export": "next export"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.8.1",
     "@nextui-org/react": "^2.4.8",
     "@reduxjs/toolkit": "^2.4.0",
     "@svgr/webpack": "^8.1.0",

@@ -8,7 +8,7 @@ const initialState: contentsState = {
   isLoadingTasks: false,
 };
 
-export const contentsSlice = createSlice<contentsState>({
+export const contentsSlice = createSlice({
   name: 'contents',
   initialState,
   reducers: {},
