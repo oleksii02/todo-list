@@ -40,5 +40,3 @@ next-env.d.ts
 # IDE and code editor files
 .idea
 .vscode
-
-.env.example
