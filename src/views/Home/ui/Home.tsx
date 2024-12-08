@@ -11,6 +11,7 @@ export const Home = () => {
 
   return (
     <main className="mx-auto w-full max-w-4xl pt-4">
+      <div id="modal-root"></div>
       <Header />
       <NewTask />
       {isAuthenticated ? <Content /> : <TableDisabled/> }

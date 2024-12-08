@@ -11,11 +11,18 @@ import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { getUserId } from '@/entities/auth/model/selectors/getUserId';
 import { getAuthenticatedStatus } from '@/entities/auth/model/selectors/getAuthenticatedStatus';
-import { Modal, ModalContent, useDisclosure } from '@nextui-org/react';
 import { getLoadingRegister } from '@/entities/register/model/selectors/getLoadingRegister';
 import { getErrorRegister } from '@/entities/register/model/selectors/getErrorRegister';
-export const ModalRegister: FC = () => {
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  error?: string;
+  registerUser?: () => void;
+  isLoading?: boolean;
+}
+
+export const ModalRegister: FC<ModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -53,71 +60,68 @@ export const ModalRegister: FC = () => {
     }
   };
 
-  return (
-    <>
-      <Button
-        className="border border-white font-medium"
-        color="primary"
-        onClick={onOpen}
-      >
-        Sign up
-      </Button>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
+  const modalRoot = document.getElementById('modal-root');
+  if (!isOpen || !modalRoot) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      onClick={() => {
+        dispatch(returnError());
+        onClose();
+      }}
+    >
+      <div
         className="z-11 relative mx-auto flex w-11/12 max-w-xl flex-col items-center rounded-lg bg-white p-4"
+        onClick={(e) => e.stopPropagation()}
       >
-        <ModalContent>
-          <h1 className="mb-5 text-xl font-medium">Sign up</h1>
-          <ButtonClose
-            onPress={() => {
-              dispatch(returnError());
-              onClose();
-            }}
+        <h1 className="mb-5 text-xl font-medium">Sign up</h1>
+        <ButtonClose
+          onPress={() => {
+            dispatch(returnError());
+            onClose();
+          }}
+        />
+
+        <div className="form-control mb-4 w-4/5">
+          <Input
+            isInvalid={error || errorReg}
+            variant="bordered"
+            color={error || errorReg ? 'danger' : 'primary'}
+            label="Email"
+            type="text"
+            errorMessage={error || errorReg}
+            className="input input-bordered w-full"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
+        </div>
 
-          <div className="form-control mb-4 w-4/5">
-            <Input
-              isInvalid={!!error || !!errorRegister}
-              variant="bordered"
-              color={error || errorRegister ? 'danger' : 'primary'}
-              label="Email"
-              type="text"
-              errorMessage={error || errorRegister}
-              className="input input-bordered w-full"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+        <div className="form-control mb-4 w-4/5">
+          <Input
+            isInvalid={error || errorReg}
+            variant="bordered"
+            color={error || errorReg ? 'danger' : 'primary'}
+            type="password"
+            label="Password"
+            className="input input-bordered w-full"
+            value={password}
+            errorMessage={error || errorReg}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
-          <div className="form-control mb-4 w-4/5">
-            <Input
-              isInvalid={!!error || !!errorRegister}
-              variant="bordered"
-              color={error || errorRegister ? 'danger' : 'primary'}
-              type="password"
-              label="Password"
-              className="input input-bordered w-full"
-              value={password}
-              errorMessage={error || errorRegister}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <div className="flex w-4/5 justify-end">
-            <Button
-              color="primary"
-              onPress={() => registerUser(email, password)}
-            >
-              {isLoadingRegister ? (
-                <span className="loading loading-spinner"></span>
-              ) : (
-                'Sign in'
-              )}
-            </Button>
-          </div>
-        </ModalContent>
-      </Modal>
-    </>
+        <div className="flex w-4/5 justify-end">
+          <Button color="primary" onPress={() => registerUser(email, password)}>
+            {isLoading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              'Sign in'
+            )}
+          </Button>
+        </div>
+      </div>
+    </div>,
+    modalRoot
   );
 };
