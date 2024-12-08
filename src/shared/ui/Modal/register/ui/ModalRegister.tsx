@@ -85,12 +85,12 @@ export const ModalRegister: FC<ModalProps> = ({ isOpen, onClose }) => {
 
         <div className="form-control mb-4 w-4/5">
           <Input
-            isInvalid={error || errorReg}
+            isInvalid={!!error || !!errorRegister}
             variant="bordered"
-            color={error || errorReg ? 'danger' : 'primary'}
+            color={error || errorRegister ? 'danger' : 'primary'}
             label="Email"
             type="text"
-            errorMessage={error || errorReg}
+            errorMessage={error || errorRegister}
             className="input input-bordered w-full"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -99,21 +99,21 @@ export const ModalRegister: FC<ModalProps> = ({ isOpen, onClose }) => {
 
         <div className="form-control mb-4 w-4/5">
           <Input
-            isInvalid={error || errorReg}
+            isInvalid={!!error || !!errorRegister}
             variant="bordered"
-            color={error || errorReg ? 'danger' : 'primary'}
+            color={error || errorRegister ? 'danger' : 'primary'}
             type="password"
             label="Password"
             className="input input-bordered w-full"
             value={password}
-            errorMessage={error || errorReg}
+            errorMessage={error || errorRegister}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
         <div className="flex w-4/5 justify-end">
           <Button color="primary" onPress={() => registerUser(email, password)}>
-            {isLoading ? (
+            {isLoadingRegister ? (
               <span className="loading loading-spinner"></span>
             ) : (
               'Sign in'
