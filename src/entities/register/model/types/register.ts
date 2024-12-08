@@ -1,5 +1,5 @@
 export interface registerState {
-  userId: string | null;
-  errorReg: string | undefined;
-  isLoading: boolean;
+  userId: string;
+  errorRegister: string | undefined;
+  isLoadingRegister: boolean;
 }

@@ -1,5 +1,5 @@
 'use client';
-import {  useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useAppDispatch } from '@/shared/lib/state/dispatch/useAppDispatch';
 import { useAppSelector } from '@/shared/lib/state/selector/useAppSelector';
 import {
@@ -7,7 +7,6 @@ import {
   fetchTasks,
   markAsDone,
   markAsNotDone,
-  Task,
 } from '@/entities/contents';
 import { EditTaskModal } from '@/shared/ui/Modal/edit-task';
 import {
@@ -19,26 +18,40 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from '@nextui-org/react';
 import { Button } from '@nextui-org/button';
 import { DeleteIcon, EditIcon } from '@/shared/ui/Icon';
-import { getTaskList } from '@/entities/contents/model/selectors/getTaskList';
 import { getUserId } from '@/entities/auth/model/selectors/getUserId';
+import { getTaskList } from '@/entities/contents/model/selectors/getTaskList';
 
-export default function TaskList() {
+export const TaskList: FC = () => {
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const dispatch = useAppDispatch();
-  const taskList = useAppSelector(getTaskList) as Task[];
   const userId = useAppSelector(getUserId);
 
+
   const [taskToEdit, setTaskToEdit] = useState<any>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const taskList = useAppSelector(state => state.contents.taskList);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const tasksPerPage = 8;
+  const tasksPerPage = 10;
   const totalPages = Math.ceil(taskList.length / tasksPerPage);
-  const [currentTasks] = useState<Task[]>(
-    taskList.slice((currentPage - 1) * tasksPerPage, currentPage * tasksPerPage)
+
+  const currentTasks = taskList.slice(
+    (currentPage - 1) * tasksPerPage,
+    currentPage * tasksPerPage
   );
+
+  // if (!!currentTasks) {
+  //   // dispatch(fetchTasks(userId));
+  // }
+
+  useEffect(() => {
+    console.log(currentTasks, taskList, userId, 'currentTasks');
+  }, [taskList]);
+
+  console.log(currentTasks, taskList, userId, 'currentTasks');
 
   const handleDeleteTask = async (taskId: string) => {
     const userConfirmed = window.confirm('Delete Task?');
@@ -67,7 +80,8 @@ export default function TaskList() {
     <>
       <EditTaskModal
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
         task={taskToEdit}
       />
       <div className="flex flex-col items-center">
@@ -120,7 +134,7 @@ export default function TaskList() {
                     isIconOnly
                     color="primary"
                     onPress={() => {
-                      setIsOpen(true);
+                      onOpen();
                       setTaskToEdit(task);
                     }}
                   >
@@ -144,4 +158,4 @@ export default function TaskList() {
       </div>
     </>
   );
-}
+};

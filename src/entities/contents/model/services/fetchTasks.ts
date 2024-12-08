@@ -19,8 +19,6 @@ async function fetch(userId: string): Promise<any> {
               tasks.push({ taskId: key, ...value });
             }
           }
-        } else {
-          resolve([]);
         }
 
         resolve(tasks);
@@ -34,7 +32,7 @@ async function fetch(userId: string): Promise<any> {
 
 export const fetchTasks = createAsyncThunk<
   any,
-  { userId: string | undefined },
+  { userId: string  },
   { rejectValue: string }
 >('cont/contFetch', async (userId) => {
   return await fetch(userId);
