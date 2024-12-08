@@ -99,7 +99,7 @@ export const TaskList: FC = () => {
             <TableColumn>Delete</TableColumn>
           </TableHeader>
           <TableBody>
-            {currentTasks.map((task, i) => (
+            {currentTasks.map((task) => (
               <TableRow key={task.taskId}>
                 <TableCell>{task.taskName}</TableCell>
                 <TableCell width={200}>{task.description}</TableCell>

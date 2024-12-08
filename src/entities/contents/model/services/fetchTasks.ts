@@ -32,7 +32,7 @@ async function fetch(userId: string): Promise<any> {
 
 export const fetchTasks = createAsyncThunk<
   any,
-  { userId: string  },
+  string,
   { rejectValue: string }
 >('cont/contFetch', async (userId) => {
   return await fetch(userId);
